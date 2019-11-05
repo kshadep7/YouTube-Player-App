@@ -25,6 +25,9 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
         Log.d(tag, "onInitializationSuccess: youTubePlayer is $youTubePlayer")
         Toast.makeText(this, "YouTube Player initialization successful", Toast.LENGTH_SHORT).show()
 
+        youTubePlayer?.setPlaybackEventListener(playBackEventListener)
+        youTubePlayer?.setPlayerStateChangeListener(playerStateChangeListener)
+
         if (!wasrestored)
             youTubePlayer?.cueVideo(YOUTUBE_ID)
 
@@ -40,6 +43,51 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
             youTubeInitializationResult.getErrorDialog(this, requestCode)?.show()
         } else {
             Toast.makeText(this, youTubeInitializationResult.toString(), Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+    private val playBackEventListener =
+
+        object : YouTubePlayer.PlaybackEventListener {
+            override fun onSeekTo(p0: Int) {
+            }
+
+            override fun onBuffering(p0: Boolean) {
+            }
+
+            override fun onPlaying() {
+                Toast.makeText(this@YoutubeActivity, "Video is Playing", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onStopped() {
+                Toast.makeText(this@YoutubeActivity, "Video is stopped", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onPaused() {
+                Toast.makeText(this@YoutubeActivity, "Video is paused", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private val playerStateChangeListener = object : YouTubePlayer.PlayerStateChangeListener{
+        override fun onAdStarted() {
+            Toast.makeText(this@YoutubeActivity, "Ad started", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onLoading() {
+        }
+
+        override fun onVideoStarted() {
+        }
+
+        override fun onLoaded(p0: String?) {
+            Toast.makeText(this@YoutubeActivity, "Video is loaded", Toast.LENGTH_SHORT).show()
+        }
+
+        override fun onVideoEnded() {
+        }
+
+        override fun onError(p0: YouTubePlayer.ErrorReason?) {
         }
 
     }
@@ -64,5 +112,7 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
         layout.addView(youtubePlayerView)
 
         youtubePlayerView.initialize(getString(R.string.GOOGLE_API_KEY), this)
+
+
     }
 }
