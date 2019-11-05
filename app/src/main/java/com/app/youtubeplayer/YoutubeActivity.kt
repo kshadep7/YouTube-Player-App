@@ -1,32 +1,46 @@
 package com.app.youtubeplayer
 
 import android.os.Bundle
-import android.view.LayoutInflater
+import android.util.Log
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerView
 
-const val YOUTUBE_ID = ""
+const val YOUTUBE_ID = "zuADwUGI4RU"
 const val YOUTUBE_PLAYLIST_ID = ""
 
 class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListener {
+    private val tag = "YoutubeActivity"
 
     override fun onInitializationSuccess(
-        p0: YouTubePlayer.Provider?,
-        p1: YouTubePlayer?,
-        p2: Boolean
+        provider: YouTubePlayer.Provider?,
+        youTubePlayer: YouTubePlayer?,
+        wasrestored: Boolean
     ) {
+        Log.d(tag, "onInitializationSuccess: provider is $provider")
+        Log.d(tag, "onInitializationSuccess: youTubePlayer is $youTubePlayer")
+        Toast.makeText(this, "YouTube Player initialization successful", Toast.LENGTH_SHORT).show()
+
+        if (!wasrestored)
+            youTubePlayer?.cueVideo(YOUTUBE_ID)
+
     }
 
     override fun onInitializationFailure(
         provider: YouTubePlayer.Provider?,
         youTubeInitializationResult: YouTubeInitializationResult?
     ) {
-        val REQUEST_CODE = 0
+        val requestCode = 0
+
+        if (youTubeInitializationResult?.isUserRecoverableError == true) {
+            youTubeInitializationResult.getErrorDialog(this, requestCode)?.show()
+        } else {
+            Toast.makeText(this, youTubeInitializationResult.toString(), Toast.LENGTH_LONG).show()
+        }
 
     }
 
@@ -48,5 +62,7 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
             ViewGroup.LayoutParams.MATCH_PARENT
         )
         layout.addView(youtubePlayerView)
+
+        youtubePlayerView.initialize(getString(R.string.GOOGLE_API_KEY), this)
     }
 }
