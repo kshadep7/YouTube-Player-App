@@ -28,9 +28,12 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
         youTubePlayer?.setPlaybackEventListener(playBackEventListener)
         youTubePlayer?.setPlayerStateChangeListener(playerStateChangeListener)
 
-        if (!wasrestored)
-            youTubePlayer?.cueVideo(YOUTUBE_ID)
-
+        if (!wasrestored) {
+            youTubePlayer?.loadVideo(YOUTUBE_ID)
+        } else {
+            Toast.makeText(this, "Video Restored", Toast.LENGTH_SHORT).show()
+            youTubePlayer?.play()
+        }
     }
 
     override fun onInitializationFailure(
@@ -69,7 +72,7 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
             }
         }
 
-    private val playerStateChangeListener = object : YouTubePlayer.PlayerStateChangeListener{
+    private val playerStateChangeListener = object : YouTubePlayer.PlayerStateChangeListener {
         override fun onAdStarted() {
             Toast.makeText(this@YoutubeActivity, "Ad started", Toast.LENGTH_SHORT).show()
         }
