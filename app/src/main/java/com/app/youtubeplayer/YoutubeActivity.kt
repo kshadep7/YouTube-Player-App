@@ -1,5 +1,6 @@
 package com.app.youtubeplayer
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -11,10 +12,12 @@ import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerView
 
 const val YOUTUBE_ID = "zuADwUGI4RU"
-const val YOUTUBE_PLAYLIST_ID = ""
+const val YOUTUBE_PLAYLIST_ID = "RDXStMtSJsAsg"
 
 class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListener {
     private val tag = "YoutubeActivity"
+    private val dialogRequestCode = 1
+    private val youtubePlayerView by lazy { YouTubePlayerView(this) }
 
     override fun onInitializationSuccess(
         provider: YouTubePlayer.Provider?,
@@ -40,10 +43,10 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
         provider: YouTubePlayer.Provider?,
         youTubeInitializationResult: YouTubeInitializationResult?
     ) {
-        val requestCode = 0
+
 
         if (youTubeInitializationResult?.isUserRecoverableError == true) {
-            youTubeInitializationResult.getErrorDialog(this, requestCode)?.show()
+            youTubeInitializationResult.getErrorDialog(this, dialogRequestCode)?.show()
         } else {
             Toast.makeText(this, youTubeInitializationResult.toString(), Toast.LENGTH_LONG).show()
         }
@@ -107,7 +110,7 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
 //        button1.text = "Button Added"
 //        layout.addView(button1)
 
-        val youtubePlayerView = YouTubePlayerView(this)
+
         youtubePlayerView.layoutParams = ConstraintLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -115,7 +118,22 @@ class YoutubeActivity : YouTubeBaseActivity(), YouTubePlayer.OnInitializedListen
         layout.addView(youtubePlayerView)
 
         youtubePlayerView.initialize(getString(R.string.GOOGLE_API_KEY), this)
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        Log.d(
+            tag,
+            "onActivityResult called with request code : $requestCode and result code: $resultCode"
+        )
+
+        if (requestCode == dialogRequestCode) {
+            Log.d(tag, intent.toString())
+            Log.d(tag, intent.extras.toString())
+        }
+
+        youtubePlayerView.initialize(getString(R.string.GOOGLE_API_KEY), this)
 
     }
 }
